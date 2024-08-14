@@ -28,7 +28,7 @@ export const fetchMortgageRates = async ({
   loanTerm
 }: FetchMortgageRatesParams): Promise<MortgageRate[]> => {
   try {
-    const response: AxiosResponse<MortgageRate[]> = await axios.get('https://cors-anywhere.herokuapp.com/https://www.consumerfinance.gov/oah-api/rates/rate-checker', {
+    const response: AxiosResponse<MortgageRate[]> = await axios.get('https://www.consumerfinance.gov/oah-api/rates/rate-checker', {
       params: {
         state,
         minfico: creditScoreRange[0],
@@ -38,7 +38,6 @@ export const fetchMortgageRates = async ({
         loan_type: loanType,
         price: housePrice,
         loan_term:loanTerm
-        // api_key: API_KEY,
       },
     });
     return response.data;

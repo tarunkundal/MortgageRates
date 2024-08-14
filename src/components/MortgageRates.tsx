@@ -74,7 +74,7 @@ const MortgageRates: React.FC = () => {
     handleFetchRates();
   }, [state, creditScoreRange, loanAmount, rateType, loanType, loanTerm]);
 
-  const handleCreditScoreChange = (event: Event, newValue: number | number[]) => {
+  const handleCreditScoreChange = (_event: Event, newValue: number | number[]) => {
     if (Array.isArray(newValue)) {
       const [start, end] = newValue;
       // minimum range of 20 points
@@ -187,7 +187,7 @@ const MortgageRates: React.FC = () => {
                   <ToggleButtonGroup
                     value={rateType}
                     exclusive
-                    onChange={(e, newRateType) => setRateType(newRateType)}
+                    onChange={(_e, newRateType) => setRateType(newRateType)}
                     aria-label="rate type"
                     fullWidth
                   >
@@ -203,7 +203,7 @@ const MortgageRates: React.FC = () => {
                   <ToggleButtonGroup
                     value={loanType}
                     exclusive
-                    onChange={(e, newLoanType) => setLoanType(newLoanType)}
+                    onChange={(_e, newLoanType) => setLoanType(newLoanType)}
                     aria-label="loan type"
                     fullWidth
                   >
@@ -220,7 +220,7 @@ const MortgageRates: React.FC = () => {
                   <ToggleButtonGroup
                     value={loanTerm}
                     exclusive
-                    onChange={(e, newLoanTerm) => setLoanTerm(parseInt(newLoanTerm))}
+                    onChange={(_e, newLoanTerm) => setLoanTerm(parseInt(newLoanTerm))}
                     aria-label="loan term"
                     fullWidth
                   >
