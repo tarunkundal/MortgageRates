@@ -1,6 +1,5 @@
-// src/types/mortgageRates.ts
-
 export interface MortgageRate {
-  interest_rate: string;
-  lenders_count: number;
+  data:  Record<string, number>,
+  request: object,
+  timestamp:string 
 }

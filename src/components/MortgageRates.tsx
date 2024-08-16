@@ -18,7 +18,7 @@ import { fetchMortgageRates } from '../services/mortgageService';
 import { MortgageRate } from '../types/mortgageRates';
 import states from '../helpers/states.json';
 import { styled } from '@mui/system';
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
+import MortgageRateChart from './MortgageRatesChart';
 
 interface State {
   name: string;
@@ -39,7 +39,7 @@ const GreenToggleButton = styled(ToggleButton)({
 });
 
 const MortgageRates: React.FC = () => {
-  const [state, setState] = useState<string>('AL'); // Store the abbreviation here
+  const [state, setState] = useState<string>('AL');
   const [housePrice, setHousePrice] = useState<number>(200000);
   const [downPayment, setDownPayment] = useState<number>(20000);
   const [loanAmount, setLoanAmount] = useState<number>(180000);
@@ -48,7 +48,7 @@ const MortgageRates: React.FC = () => {
   const [loanType, setLoanType] = useState<string>('conf');
   const [loanTerm, setLoanTerm] = useState<number>(15);
   const [loading, setLoading] = useState<boolean>(false);
-  const [rates, setRates] = useState<MortgageRate[]>([]);
+  const [rates, setRates] = useState<MortgageRate>({data:{},request:{},timestamp:''});
 
   const handleFetchRates = async () => {
     setLoading(true);
@@ -77,35 +77,21 @@ const MortgageRates: React.FC = () => {
   const handleCreditScoreChange = (_event: Event, newValue: number | number[]) => {
     if (Array.isArray(newValue)) {
       const [start, end] = newValue;
-      // minimum range of 20 points
       if (end - start >= 20) {
         setCreditScoreRange(newValue);
       }
     }
   };
 
-  console.log(rates);
-
-  const newrates = [
-    { interest_rate: '3.5%', lenders_count: 20 },
-    { interest_rate: '3.6%', lenders_count: 15 },
-    { interest_rate: '3.7%', lenders_count: 25 },
-    { interest_rate: '3.8%', lenders_count: 18 },
-    { interest_rate: '3.9%', lenders_count: 22 },
-  ];
-
-
   return (
     <Container>
-      <Box display={'flex'} flexDirection={'column'} gap={4} alignItems={'center'} justifyContent={'center'} >
+      <Box display={'flex'} flexDirection={'column'} gap={4} alignItems={'center'} justifyContent={'center'}>
         <Typography variant="h4" align="center" gutterBottom>
           Explore Mortgage Rates in Your Area
         </Typography>
 
-        {/* Filters Section */}
         <Box border={'2px solid #399918'} padding={'1rem'} borderRadius={'1rem'} width={'80%'}>
           <Typography variant="h6">Explore Rate Options</Typography>
-
           <Container>
             <Grid container spacing={2}>
               <Grid item xs={12} md={4}>
@@ -118,7 +104,6 @@ const MortgageRates: React.FC = () => {
                   onChange={(e) => setHousePrice(Number(e.target.value))}
                 />
               </Grid>
-
               <Grid item xs={12} md={4}>
                 <TextField
                   label="Down Payment $"
@@ -133,7 +118,6 @@ const MortgageRates: React.FC = () => {
                   }}
                 />
               </Grid>
-
               <Grid item xs={12} md={4}>
                 <TextField
                   label="Loan Amount $"
@@ -144,7 +128,6 @@ const MortgageRates: React.FC = () => {
                   value={loanAmount}
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <Box sx={{ marginBottom: '16px' }}>
                   <Typography gutterBottom>Credit Score Range</Typography>
@@ -162,7 +145,6 @@ const MortgageRates: React.FC = () => {
                   <Typography>Selected Range: {creditScoreRange[0]} - {creditScoreRange[1]}</Typography>
                 </Box>
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="state-select-label">Choose your state</InputLabel>
@@ -180,7 +162,6 @@ const MortgageRates: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-
               <Grid item xs={12} md={4}>
                 <Box sx={{ marginBottom: '16px' }}>
                   <Typography gutterBottom>Rate Type</Typography>
@@ -196,7 +177,6 @@ const MortgageRates: React.FC = () => {
                   </ToggleButtonGroup>
                 </Box>
               </Grid>
-
               <Grid item xs={12} md={4}>
                 <Box sx={{ marginBottom: '16px' }}>
                   <Typography gutterBottom>Loan Type</Typography>
@@ -213,7 +193,6 @@ const MortgageRates: React.FC = () => {
                   </ToggleButtonGroup>
                 </Box>
               </Grid>
-
               <Grid item xs={12} md={4}>
                 <Box sx={{ marginBottom: '16px' }}>
                   <Typography gutterBottom>Loan Term</Typography>
@@ -231,30 +210,18 @@ const MortgageRates: React.FC = () => {
               </Grid>
             </Grid>
           </Container>
-          {/* </Card> */}
         </Box>
 
 
-        {/* Chart Section */}
-        <Box width={'80%'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'} border={'2px solid #399918'} borderRadius={'1rem'} >
+        <Box width={'80%'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'} border={'2px solid #399918'} borderRadius={'1rem'}>
           <Typography variant="h6" align="center" gutterBottom>
             Mortgage Rate Distribution
           </Typography>
-          <Box sx={{ height: 600 }}>
             {loading ? (
               <CircularProgress />
             ) : (
-              // <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={newrates}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="interest_rate" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="lenders_count" fill="#82ca9d" />
-                </BarChart>
-              // </ResponsiveContainer>
+              <MortgageRateChart data={rates} />
             )}
-          </Box>
         </Box>
       </Box>
     </Container>
