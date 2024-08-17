@@ -3,7 +3,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { MortgageRate } from '../types/mortgageRates';
 
-const BASE_URL = import.meta.env.BASE_URL
+const refererUrl = import.meta.env.REACT_APP_REFERER
 
 interface FetchMortgageRatesParams {
   state: string;
@@ -14,8 +14,6 @@ interface FetchMortgageRatesParams {
   housePrice: number;
   loanTerm:number
 }
-
-console.log('baseurlrir',BASE_URL);
 
 
 export const fetchMortgageRates = async ({
@@ -42,7 +40,7 @@ export const fetchMortgageRates = async ({
        headers: {
     'Accept': 'application/json',
     'User-Agent': 'Mozilla/5.0',
-    // 'Referer': 'http://localhost:5173/',
+    'Referer': refererUrl,
   },
     });
     return response.data;
