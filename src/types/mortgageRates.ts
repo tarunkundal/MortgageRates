@@ -1,5 +1,5 @@
 export interface MortgageRate {
   data:  Record<string, number>,
-  request: object,
+  request: {state:string},
   timestamp:string 
 }

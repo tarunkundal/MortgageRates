@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Grid,
@@ -13,6 +13,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Button,
 } from '@mui/material';
 import { fetchMortgageRates } from '../services/mortgageService';
 import { MortgageRate } from '../types/mortgageRates';
@@ -38,20 +39,34 @@ const GreenToggleButton = styled(ToggleButton)({
   },
 });
 
+const defaultValues = {
+  state: 'AL',
+  housePrice: 200000,
+  downPayment: 20000,
+  loanAmount: 180000,
+  creditScoreRange: [700, 720],
+  rateType: 'fixed',
+  loanType: 'conf',
+  loanTerm: 15,
+};
+
 const MortgageRates: React.FC = () => {
-  const [state, setState] = useState<string>('AL');
-  const [housePrice, setHousePrice] = useState<number>(200000);
-  const [downPayment, setDownPayment] = useState<number>(20000);
-  const [loanAmount, setLoanAmount] = useState<number>(180000);
-  const [creditScoreRange, setCreditScoreRange] = useState<number[]>([700, 720]);
-  const [rateType, setRateType] = useState<string>('fixed');
-  const [loanType, setLoanType] = useState<string>('conf');
-  const [loanTerm, setLoanTerm] = useState<number>(15);
+  const [state, setState] = useState<string>(defaultValues.state);
+  const [housePrice, setHousePrice] = useState<number>(defaultValues.housePrice);
+  const [downPayment, setDownPayment] = useState<number>(defaultValues.downPayment);
+  const [loanAmount, setLoanAmount] = useState<number>(defaultValues.loanAmount);
+  const [creditScoreRange, setCreditScoreRange] = useState<number[]>(defaultValues.creditScoreRange);
+  const [rateType, setRateType] = useState<string>(defaultValues.rateType);
+  const [loanType, setLoanType] = useState<string>(defaultValues.loanType);
+  const [loanTerm, setLoanTerm] = useState<number>(defaultValues.loanTerm);
   const [loading, setLoading] = useState<boolean>(false);
-  const [rates, setRates] = useState<MortgageRate>({data:{},request:{},timestamp:''});
+  const [error, setError] = useState<boolean>(false);
+  const [rates, setRates] = useState<MortgageRate>({data:{},request:{state:''},timestamp:''});
+  const chartRef = useRef(null);
 
   const handleFetchRates = async () => {
     setLoading(true);
+    setError(false); // Reset error state
     try {
       const data = await fetchMortgageRates({
         state,
@@ -65,6 +80,7 @@ const MortgageRates: React.FC = () => {
       setRates(data);
     } catch (error) {
       console.error('Failed to fetch mortgage rates', error);
+      setError(true); // Set error state
     } finally {
       setLoading(false);
     }
@@ -83,10 +99,22 @@ const MortgageRates: React.FC = () => {
     }
   };
 
+  const handleReset = () => {
+    setState(defaultValues.state);
+    setHousePrice(defaultValues.housePrice);
+    setDownPayment(defaultValues.downPayment);
+    setLoanAmount(defaultValues.loanAmount);
+    setCreditScoreRange(defaultValues.creditScoreRange);
+    setRateType(defaultValues.rateType);
+    setLoanType(defaultValues.loanType);
+    setLoanTerm(defaultValues.loanTerm);
+  };
+
+
   return (
     <Container>
       <Box display={'flex'} flexDirection={'column'} gap={4} alignItems={'center'} justifyContent={'center'}>
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant="h3" align="center" gutterBottom>
           Explore Mortgage Rates in Your Area
         </Typography>
 
@@ -212,16 +240,24 @@ const MortgageRates: React.FC = () => {
           </Container>
         </Box>
 
-
-        <Box width={'80%'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'} border={'2px solid #399918'} borderRadius={'1rem'}>
-          <Typography variant="h6" align="center" gutterBottom>
+        <Box width={'80%'} display={'flex'} flexDirection={'column'} gap={2} py={4} justifyContent={'center'} alignItems={'center'} border={'2px solid #399918'} borderRadius={'1rem'}>
+          <Typography variant="h4" align="center" gutterBottom>
             Mortgage Rate Distribution
           </Typography>
-            {loading ? (
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
               <CircularProgress />
-            ) : (
-              <MortgageRateChart data={rates} />
-            )}
+            </Box>
+          ) : error ? (
+            <Typography variant="h6" color="error">
+              Something went wrong. Please try again.
+              <Button onClick={handleReset} variant="contained" color="primary" sx={{ ml: 2 }}>
+                Reset to default values
+              </Button>
+            </Typography>
+          ) : (
+              <MortgageRateChart data={rates} ref={chartRef} />
+          )}
         </Box>
       </Box>
     </Container>

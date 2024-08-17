@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/oah-api/:path*",
-      "destination": "https://www.consumerfinance.gov/oah-api/:path*"
-    }
-  ]
-}
