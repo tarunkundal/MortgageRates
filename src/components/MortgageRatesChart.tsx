@@ -62,7 +62,7 @@ const MortgageRateChart: React.FC<ChartProps> = ({ data }) => {
           text: 'Interest rates for your situation (%)',
         },
         ticks: {
-          callback: (value, index) => {
+          callback: (_value, index) => {
             return sortedRates[index]; // Display x-axis labels as percentages
           },
         },
