@@ -42,7 +42,7 @@ export const fetchMortgageRates = async ({
        headers: {
     'Accept': 'application/json',
     'User-Agent': 'Mozilla/5.0',
-    'Referer': 'http://localhost:5173/',
+    // 'Referer': 'http://localhost:5173/',
   },
     });
     return response.data;
